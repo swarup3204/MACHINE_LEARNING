@@ -182,6 +182,6 @@ def different_max_depths():
     plt.clf()
 
 
-# ten_random_splits()
+ten_random_splits()
 different_limit_size()
-# different_max_depths()
+different_max_depths()
