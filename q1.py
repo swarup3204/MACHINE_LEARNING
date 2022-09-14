@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import sys
 
 
 # load csv file
@@ -31,6 +32,9 @@ class RegressionTree:
 
 
         '''
+        self.min_sse = -1
+        self.depth = depth
+        self.dataset_count = len(db)
         self.isRoot = isRoot
         self.isLeaf = True
         self.return_ans = db[TARGET_ATTRIBUTE].mean()
@@ -39,28 +43,24 @@ class RegressionTree:
         else:
             self.isLeaf = False
             min_sse = -1
-            self.attrb = ATTRIBUTES[0]
-            self.left_value = db[ATTRIBUTES[0]].mean()
+            self.attrb = None
+            self.left_value = None
 
             for atrribute in ATTRIBUTES:
                 new_db = db[[atrribute, TARGET_ATTRIBUTE]]
-                new_db.sort_values(by=[atrribute])
+                new_db = new_db.sort_values(by=[atrribute])
                 for i in range(len(new_db)):
                     left_db = new_db[TARGET_ATTRIBUTE].iloc[:i]
                     right_db = new_db[TARGET_ATTRIBUTE].iloc[i:]
-                    mean1 = left_db.mean()
-                    mean2 = right_db.mean()
-                    cur_sse = 0
-                    cur_sse += sum([(left_db.iloc[j]-mean1) **
-                                   2 for j in range(len(left_db))])
-                    cur_sse += sum([(right_db.iloc[j]-mean2) **
-                                   2 for j in range(len(right_db))])
-
-                    if min_sse == -1 or min_sse > cur_sse:
+                    mean1 = np.mean(left_db)
+                    mean2 = np.mean(right_db)
+                    cur_sse = np.sum((left_db-mean1)**2) + \
+                        np.sum((right_db-mean2)**2)
+                    if min_sse == -1 or min_sse >= cur_sse:
                         self.attrb = atrribute
                         min_sse = cur_sse
                         self.left_value = new_db[atrribute].iloc[i]
-
+            self.min_sse = min_sse
             self.L = RegressionTree(
                 db.loc[db[self.attrb] < self.left_value], depth+1, False, LIMIT_SIZE, MAX_DEPTH)
             self.R = RegressionTree(
@@ -108,6 +108,18 @@ class RegressionTree:
         self.L.prune(test_input, root, y_true)
         self.R.prune(test_input, root, y_true)
 
+    def print_tree(self):
+        if (self.isLeaf):
+            print("--"*self.depth, end='>')
+            print(
+                f" Dataset count : {self.dataset_count}, isLeaf : True, Predicted Value : {self.return_ans}",end="\n\n")
+        else:
+            print("--"*self.depth, end='>')
+            print(
+                f" Dataset count : {self.dataset_count}, isLeaf : False, Split Rule : {self.attrb} < {self.left_value}, min_sse : {self.min_sse}",end='\n\n')
+            self.L.print_tree()
+            self.R.print_tree()
+
 
 # function to split dataset into train set and test set
 def test_train_split(db: pd.DataFrame, train_size=0.3) -> tuple:
@@ -116,7 +128,17 @@ def test_train_split(db: pd.DataFrame, train_size=0.3) -> tuple:
     return random_suffled[:split_point].reset_index(drop=True), random_suffled[split_point:].reset_index(drop=True)
 
 
+def save_model_tree(model, filename: str, test: pd.DataFrame):
+    original_stdout = sys.stdout
+    with open(filename, "w") as f:
+        sys.stdout = f
+        print(f"Accuracy : {model.get_accuracy(test,test[TARGET_ATTRIBUTE])}")
+        model.print_tree()
+        sys.stdout = original_stdout
+
 # perform ten random splits and plot accuracy
+
+
 def ten_random_splits():
 
     print("Accuracy of 10 Random Splits")
@@ -183,7 +205,7 @@ def different_max_depths():
     x_axis = []
 
     test, train = test_train_split(dataset, 0.3)
-    for depth in range(1, 10):
+    for depth in range(1, 15):
         print(f"Max Depth ({depth}):-")
         x_axis.append(depth)
         reg = RegressionTree(train, LIMIT_SIZE=1, MAX_DEPTH=depth)
@@ -201,8 +223,17 @@ def different_max_depths():
     plt.savefig('Accuracy_vs_max_depth.png')
     plt.clf()
 
+# perform prune testing and prints before and after pruning version of tree in corresponding txt files
+def prune_testing():
+    test, train = test_train_split(dataset, 0.3)
+    reg = RegressionTree(train, MAX_DEPTH=3)
+    save_model_tree(reg, "tree_before_pruning.txt", test)
+    reg.prune(test, reg, np.array(test[TARGET_ATTRIBUTE]))
+    save_model_tree(reg, "tree_after_pruning.txt", test)
+
 
 if __name__ == '__main__':
-    ten_random_splits()
-    different_limit_size()
-    different_max_depths()
+    # ten_random_splits()
+    # different_limit_size()
+    # different_max_depths()
+    prune_testing()

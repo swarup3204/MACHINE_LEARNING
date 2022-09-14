@@ -1,0 +1,31 @@
+Accuracy : 67.36850070521717
+> Dataset count : 721, isLeaf : False, Split Rule : age < 28, min_sse : 147407.28290596185
+
+--> Dataset count : 234, isLeaf : False, Split Rule : cement < 359.0, min_sse : 20242.240302511396
+
+----> Dataset count : 167, isLeaf : False, Split Rule : age < 7, min_sse : 7816.237934350394
+
+------> Dataset count : 68, isLeaf : True, Predicted Value : 14.868088235294117
+
+------> Dataset count : 99, isLeaf : True, Predicted Value : 20.951717171717174
+
+----> Dataset count : 67, isLeaf : False, Split Rule : age < 7, min_sse : 5808.314732600733
+
+------> Dataset count : 32, isLeaf : True, Predicted Value : 29.9853125
+
+------> Dataset count : 35, isLeaf : True, Predicted Value : 40.57485714285715
+
+--> Dataset count : 487, isLeaf : False, Split Rule : cement < 359.0, min_sse : 78698.739251102
+
+----> Dataset count : 377, isLeaf : False, Split Rule : cement < 165.0, min_sse : 47463.57219015984
+
+------> Dataset count : 90, isLeaf : True, Predicted Value : 26.554777777777776
+
+------> Dataset count : 287, isLeaf : True, Predicted Value : 40.0498606271777
+
+----> Dataset count : 110, isLeaf : False, Split Rule : water < 185.0, min_sse : 11066.461615756303
+
+------> Dataset count : 68, isLeaf : True, Predicted Value : 63.468088235294104
+
+------> Dataset count : 42, isLeaf : True, Predicted Value : 46.47357142857143
+
