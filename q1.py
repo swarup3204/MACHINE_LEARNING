@@ -227,8 +227,10 @@ def ten_random_splits():
     plt.ylabel('Accuracy Percentage')
     plt.title('Accuracy of 10 random splits')
     plt.legend()
-    plt.savefig('Accuracy_of_10_random_splits.png')
+    plt.savefig('plot/Accuracy_of_10_random_splits.png')
     plt.clf()
+    
+    print("Plot save in plot/Accuracy_of_10_random_splits.png")
 
 
 def different_limit_size():
@@ -272,8 +274,10 @@ def different_limit_size():
     plt.ylabel('Accuracy Percentage')
     plt.title('Accuracy v/s Limit Size')
     plt.legend()
-    plt.savefig('Accuracy_vs_limit_size.png')
+    plt.savefig('plot/Accuracy_vs_limit_size.png')
     plt.clf()
+
+    print("Plot save in plot/Accuracy_vs_limit_size.png")
 
 
 def different_max_depths():
@@ -316,30 +320,53 @@ def different_max_depths():
     plt.ylabel('Accuracy Percentage')
     plt.title('Accuracy v/s Max Depth')
     plt.legend()
-    plt.savefig('Accuracy_vs_max_depth.png')
+    plt.savefig('plot/Accuracy_vs_max_depth.png')
     plt.clf()
+    print("Plot save in plot/Accuracy_vs_max_depth.png")
 
 
 def prune_testing():
     '''
         Perform prune testing and prints before and after pruning version of tree in corresponding txt files
         tree_before_pruning.txt : Tree diagram without pruning
-        tree_after_pruning.txtx : Tree diagram with pruning
+        tree_after_pruning.txt : Tree diagram with pruning
     '''
-
+    print("Prune Testing")
     test, train = test_train_split(dataset, 0.3)
 
     # creating tree with max_depth=5
     reg = RegressionTree(train, MAX_DEPTH=5)
-    save_model_tree(reg, "tree_before_pruning.txt", test)
+    save_model_tree(reg, "printed_tree/tree_before_pruning.txt", test)
     
     # pruning
     reg.prune(test, reg, np.array(test[TARGET_ATTRIBUTE]))
-    save_model_tree(reg, "tree_after_pruning.txt", test)
+    save_model_tree(reg, "printed_tree/tree_after_pruning.txt", test)
+
+    print("Saved tree printed_tree/")
 
 
 if __name__ == '__main__':
-    ten_random_splits()
-    different_limit_size()
-    different_max_depths()
-    prune_testing()
+    q = 1
+    while(q):
+        print("\n---------------------------------------------------------------------------------------------------------------------")
+        print("0) Exit")
+        print("1) Ten Random Split : Perform ten random splits and plot accuracy")
+        print("2) Accuracy vs Limit Size : Perform prediction with different limit sizes and plot accuracy vs limit size graph")
+        print("3) Accuracy vs Max Depth : Perform prediction with different max depth and plot accuracy vs max depth graph")
+        print("4) Prune Test : Perform prune testing and prints before and after pruning version of tree in corresponding txt files")
+        print("---------------------------------------------------------------------------------------------------------------------\n")
+
+        q = int(input("Enter Choice : "))
+
+        if q == 0:
+            break
+        elif q == 1:
+            ten_random_splits()
+        elif q == 2:
+            different_limit_size()
+        elif q == 3:
+            different_max_depths()
+        elif q == 4:
+            prune_testing()
+        else:
+            print("Wrong Choice")
