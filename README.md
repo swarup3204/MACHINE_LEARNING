@@ -2,12 +2,6 @@
 ## Contributors
 - Grace Sharma
 - Swarup Padhi
-## About
-On-Going Project.
-The goals of this Project
-are as follows:
-- "Add Points"
-- "Add Points" 
 ## Instruction
 - **Create virtual environment**
 ```bash
@@ -24,5 +18,3 @@ pip install -r requirements.txt  # Check/Install dependencies
 python q1.py                     # Run q1.py
 python q2.py                     # Run q2.py
 ```
-
-## First Question 

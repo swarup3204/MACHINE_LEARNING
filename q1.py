@@ -1,3 +1,4 @@
+from fileinput import filename
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -28,7 +29,7 @@ def get_score(y_true: np.ndarray, y_pred: np.ndarray):
 
 # Regression Tree
 class RegressionTree:
-    def __init__(self, db: pd.DataFrame, depth=0, isRoot=True, LIMIT_SIZE=20, MAX_DEPTH=10):
+    def __init__(self, db: pd.DataFrame, depth=1, isRoot=True, LIMIT_SIZE=20, MAX_DEPTH=15):
         '''
             db -> Training Dataset
             LIMIT_SIZE -> number of dataset in a leaf node
@@ -150,6 +151,13 @@ class RegressionTree:
             self.L.print_tree()
             self.R.print_tree()
 
+    def get_depth(self) -> int:
+        '''
+            DFS to get depth of tree
+        '''
+        if(self.isLeaf):
+            return 1
+        return max(self.L.get_depth(),self.R.get_depth()) + 1
 
 def test_train_split(db: pd.DataFrame, train_size=0.3) -> tuple:
     '''
@@ -200,6 +208,9 @@ def ten_random_splits():
     accuracy_prune = []
     x_axis = []
 
+    max_acc = 0
+    depth_of_best_acc = -1
+
     for i in range(10):
         print(f"Split ({i+1}):-")
         x_axis.append(i+1)
@@ -208,11 +219,17 @@ def ten_random_splits():
         test, train = test_train_split(dataset, 0.3)
 
         # traing model
-        reg = RegressionTree(train, LIMIT_SIZE=1, MAX_DEPTH=10)
+        reg = RegressionTree(train, LIMIT_SIZE=1, MAX_DEPTH=15)
         y_true = np.array(test[TARGET_ATTRIBUTE])
 
         # accuracy without pruning
-        accuracy.append(reg.get_accuracy(test, test[TARGET_ATTRIBUTE]))
+        ori_acc = reg.get_accuracy(test, test[TARGET_ATTRIBUTE])
+        accuracy.append(ori_acc)
+        
+        # updating max accuracy
+        if max_acc < ori_acc:
+            max_acc = ori_acc
+            depth_of_best_acc = reg.get_depth()
 
         #pruning
         reg.prune(test, reg, y_true)
@@ -231,6 +248,21 @@ def ten_random_splits():
     plt.clf()
     
     print("Plot save in plot/Accuracy_of_10_random_splits.png")
+    print(f"Best Accuracy : {max_acc} with depth : {depth_of_best_acc}")
+
+    # storing original stdout
+    original_stdout = sys.stdout
+    filename = "accuracy_results/ten_random_splits.txt"
+    with open(filename, "w") as f:
+
+        # assigning stdout to given file
+        sys.stdout = f  
+
+        print(f"Accuracy Without Pruning : {accuracy}")
+        print(f"Accuracy With Pruning : {accuracy_prune}")
+
+        # assigning back original stdout
+        sys.stdout = original_stdout
 
 
 def different_limit_size():
@@ -279,6 +311,21 @@ def different_limit_size():
 
     print("Plot save in plot/Accuracy_vs_limit_size.png")
 
+    # storing original stdout
+    original_stdout = sys.stdout
+    filename = "accuracy_results/different_limit_size.txt"
+    with open(filename, "w") as f:
+
+        # assigning stdout to given file
+        sys.stdout = f  
+
+        print(f"Limit Size : {x_axis}")
+        print(f"Accuracy Without Pruning : {accuracy}")
+        print(f"Accuracy With Pruning : {accuracy_prune}")
+
+        # assigning back original stdout
+        sys.stdout = original_stdout
+
 
 def different_max_depths():
     '''
@@ -324,6 +371,21 @@ def different_max_depths():
     plt.clf()
     print("Plot save in plot/Accuracy_vs_max_depth.png")
 
+        # storing original stdout
+    original_stdout = sys.stdout
+    filename = "accuracy_results/different_max_depths.txt"
+    with open(filename, "w") as f:
+
+        # assigning stdout to given file
+        sys.stdout = f  
+
+        print(f"Max Depth : {x_axis}")
+        print(f"Accuracy Without Pruning : {accuracy}")
+        print(f"Accuracy With Pruning : {accuracy_prune}")
+
+        # assigning back original stdout
+        sys.stdout = original_stdout
+
 
 def prune_testing():
     '''
@@ -347,7 +409,7 @@ def prune_testing():
 
 if __name__ == '__main__':
     q = 1
-    while(q):
+    while(1):
         print("\n---------------------------------------------------------------------------------------------------------------------")
         print("0) Exit")
         print("1) Ten Random Split : Perform ten random splits and plot accuracy")
