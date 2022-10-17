@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn .decomposition import PCA
+from sklearn.decomposition import PCA
 
 ATTRIBUTES = ['sepal_length', 'sepal_width', 'petal_length','petal_width']
 TARGET = 'class'
