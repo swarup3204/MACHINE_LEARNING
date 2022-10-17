@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn .decomposition import PCA
 
 ATTRIBUTES = ['sepal_length', 'sepal_width', 'petal_length','petal_width']
 TARGET = 'class'
@@ -11,8 +10,9 @@ df = pd.read_csv('iris.data', sep=',', names=ATTRIBUTES + [TARGET])
 x = df[ATTRIBUTES]
 y = df[TARGET].tolist()
 
+pca = PCA(0.95)
+x_pca = pca.fit_transform(x)
 
-x_scaled = StandardScaler().fit_transform(x)
+print(x_pca.shape)
 
-x_train,x_test,y_train,y_test = train_test_split(x_scaled,y,test_size=0.2)
 
