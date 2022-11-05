@@ -215,25 +215,30 @@ def ensemble_max_voting_technique(df,hidden_layers):
     clf2.fit(train_x,train_y)
     clf3 = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=0.001)
     clf3.fit(train_x,train_y)
-    y_pred1 = clf1.predict(test_x)
-    y_pred2 = clf2.predict(test_x)
-    y_pred3 = clf3.predict(test_x)
+    y_pred_list = []
+    y_pred_list.append(clf1.predict(test_x))
+    y_pred_list.append(clf2.predict(test_x))
+    y_pred_list.append(clf3.predict(test_x))
     # print(clf1.predict_proba(test_x))
     # y_prob1 = clf1.predict_proba(test_x)
     # y_prob2 = clf2.predict_proba(test_x)
     # y_prob3 = clf3.predict_proba(test_x)
+    acc_list=[]
+    acc_list.append(accuracy_score(test_y, y_pred_list[0]))
+    acc_list.append(accuracy_score(test_y, y_pred_list[1]))
+    acc_list.append(accuracy_score(test_y, y_pred_list[2]))
     y_pred = []
-    for i in range(len(y_pred1)):
-        if y_pred1[i] == y_pred2[i] or y_pred1[i] == y_pred3[i] or y_pred2[i] == y_pred3[i]:
-            y_pred.append(y_pred1[i])
-        else:   # all 3 models predict different classes for a particular test case, assign class with highest probability
+    for i in range(len(y_pred_list[0])):
+        if y_pred_list[0][i] == y_pred_list[1][i] or y_pred_list[0][i] == y_pred_list[2][i] or y_pred_list[1][i] == y_pred_list[2][i]:
+            y_pred.append(y_pred_list[0][i])
+        else:   # all 3 models predict different classes for a particular test case, assign class with highest accuracy
+            y_pred.append(y_pred_list[acc_list.index(max(acc_list))])
             # if y_prob1[i][0] > y_prob1[i][1] and y_prob1[i][0] > y_prob1[i][2]:
             #     y_pred.append(0)
             # elif y_prob1[i][1] > y_prob1[i][0] and y_prob1[i][1] > y_prob1[i][2]:
             #     y_pred.append(1)
             # else:
             #     y_pred.append(2)
-            y_pred.append(y_pred1[i])
             
     print(f"Accuracy of ensemble model is {accuracy_score(test_y, y_pred)}")
 

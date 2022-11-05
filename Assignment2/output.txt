@@ -1,24 +1,24 @@
 Class Iris-versicolor is linearly separable than other two classes, Iris-setosa and Iris-virginica
-Accuracy of SVM using linear kernel is 0.7
+Accuracy of SVM using linear kernel is 0.7333333333333333
 Accuracy of SVM using quadratic kernel is 0.9
-Accuracy of SVM using radial basis function kernel is 0.9
+Accuracy of SVM using radial basis function kernel is 0.9333333333333333
 The accuracy of MLP classifier with one hidden layer of 16 nodes is 0.9
 The accuracy of MLP classifier with two hidden layers of 256 and 16 nodes is 0.9
 Second option given in question gives more accuracy,hidden layers = (256,16)
 Learning rates are  [0.0001, 0.001, 0.01, 0.1, 1]
-Accuracies are  [0.8666666666666667, 0.9, 0.9, 0.9, 0.7]
-Maximum accuracy learning rate is 0.001
+Accuracies are  [0.7333333333333333, 0.9, 0.9666666666666667, 0.9333333333333333, 0.23333333333333334]
+Maximum accuracy learning rate is 0.01
 BACKWARD ELIMINATION STARTED
-Current accuracy is  0.9
-Accuracy after removing feature 0 is 0.9
-Accuracy after removing feature 1 is 0.9
-Accuracy after removing feature 2 is 0.9
-Accuracy after removing feature 3 is 1.0
-Removing feature 3
-Current accuracy is  1.0
-Accuracy after removing feature 0 is 1.0
-Accuracy after removing feature 1 is 1.0
-Accuracy after removing feature 2 is 0.7
+Current accuracy is  0.9333333333333333
+Accuracy after removing feature 0 is 0.9666666666666667
+Accuracy after removing feature 1 is 0.9333333333333333
+Accuracy after removing feature 2 is 0.8666666666666667
+Accuracy after removing feature 3 is 0.9666666666666667
+Removing feature 0
+Current accuracy is  0.9666666666666667
+Accuracy after removing feature 0 is 0.9333333333333333
+Accuracy after removing feature 1 is 0.8666666666666667
+Accuracy after removing feature 2 is 0.9333333333333333
 Stopped removing features
-The best set of features is ['sepal length', 'sepal width', 'petal length']
-Accuracy of ensemble model is 0.8
+The best set of features is ['sepal width', 'petal length', 'petal width']
+Accuracy of ensemble model is 0.7666666666666667
