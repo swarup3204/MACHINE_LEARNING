@@ -18,3 +18,13 @@ pip install -r requirements.txt  # Check/Install dependencies
 python q1.py                     # Run q1.py
 python q2.py                     # Run q2.py
 ```
+- **Important information Q2**
+```bash
+The dataset used in q2.py is 'iris_data.csv',  
+which is slightly different from the dataset  
+used in q1.py, i.e, 'iris.data'. In the  
+'iris_data.csv' dataset, the first row is  
+the name of the columns as mentioned in the  
+dataset description added manually for  
+convenience.  
+```
