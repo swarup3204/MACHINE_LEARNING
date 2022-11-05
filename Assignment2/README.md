@@ -15,8 +15,8 @@ pip install -r requirements.txt  # Check/Install dependencies
 ```
 - **Run Python Code**
 ```bash
-python q1.py                     # Run q1.py
-python q2.py                     # Run q2.py
+python q1.py > output.txt                    # Run q1.py
+python q2.py > output.txt                    # Run q2.py
 ```
 - **Important information Q2**
 ```bash
