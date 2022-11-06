@@ -242,8 +242,10 @@ def ensemble_max_voting_technique(df,hidden_layers):
     acc_list.append(accuracy_score(test_y, y_pred_list[2]))
     y_pred = []
     for i in range(len(y_pred_list[0])):
-        if y_pred_list[0][i] == y_pred_list[1][i] or y_pred_list[0][i] == y_pred_list[2][i] or y_pred_list[1][i] == y_pred_list[2][i]:
+        if y_pred_list[0][i] == y_pred_list[1][i] or y_pred_list[0][i] == y_pred_list[2][i]:
             y_pred.append(y_pred_list[0][i])
+        elif y_pred_list[1][i] == y_pred_list[2][i]:
+            y_pred.append(y_pred_list[1][i])
         else:   # all 3 models predict different classes for a particular test case, assign class with highest accuracy
             y_pred.append(y_pred_list[acc_list.index(max(acc_list))])
             
