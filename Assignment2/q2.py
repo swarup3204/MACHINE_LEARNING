@@ -11,10 +11,23 @@ import matplotlib.pyplot as plt
 
 def standard_scalar_normalize(df):
     # do standard scalar normalisation on all columns except class column
-    for col in df.columns:
+    for itr,col in enumerate(df.columns):
         if col == "class":
             break
-        df[col] = (df[col] - df[col].mean()) / df[col].std()
+        # find mean and standard deviation by iterating
+        mean = 0
+        std = 0
+        for i in range(len(df)):
+            mean += df.iloc[i, itr]
+        mean /= len(df)
+        for i in range(len(df)):
+            std += abs((df.iloc[i, itr] - mean))**2
+        std /= len(df)
+        std = math.sqrt(std)
+        # print(mean,std)
+        # normalize the column
+        for i in range(len(df)):
+            df.iloc[i, itr] = (df.iloc[i, itr] - mean)/std
 
     return df
 
@@ -40,7 +53,7 @@ def categorical_encoding(df):
 # in_built function not allowed
 
 
-def sample_dataframe(df):
+def shuffle_dataframe(df):
     random_suffled = df.iloc[np.random.permutation(len(df))]
     return random_suffled
 
@@ -55,31 +68,41 @@ def train_test_split(df) -> tuple:
 def find_linearly_separable(df):
     # find linearly separable classes
     # return class which is linearly separable
-    # if no class is linearly separable return -1
-    train, test = train_test_split(df)
-    train_x = train.iloc[:, 0:4].to_numpy().astype('float')
-    train_y = train.iloc[:, 4].to_numpy().astype('float')
-    test_x = test.iloc[:, 0:4].to_numpy().astype('float')
-    test_y = test.iloc[:, 4].to_numpy().astype('float')
-    # print(test_x)
-    # print(test_y)
+    # train, test = train_test_split(df)
+    train_x = df.iloc[:, 0:4].to_numpy().astype('float')
+    train_y = df.iloc[:, 4].to_numpy().astype('float')
     acc=[]
     for k in range(3):
-        acc.append(find_accuracy_SVM(train_x,train_y,test_x, test_y, k,basis = 'linear',C = 4000000))
+        acc.append(find_accuracy_SVM(train_x,train_y,train_x, train_y, k,basis = 'linear',C = 4000000,multiclass = False))
         # print(acc)
-
+    # print(acc)
     max_acc = max(acc)
-    return acc.index(max_acc)+1
+    return acc.index(max_acc)
 
 
 # calculate accuracy for a particular kernel and print it
 
-def find_accuracy_SVM(train_x,train_y,test_x, test_y, k, basis,C=1.0,degree=3):
+def find_accuracy_SVM(train_x,train_y,test_x,test_y, k, basis,C=1.0,degree=3,multiclass = True):
     # if poly kernel degree considered else ignored
+    # based on k we separate the classes and fit SVM classifier
+    # create copy of original data
+    tr_y = train_y.copy()
+    te_y = test_y.copy()
+    if multiclass == False:
+        for i in range(len(train_y)):
+            if (train_y[i] == k):
+                tr_y[i] = 1
+            else:
+                tr_y[i] = -1
+        for i in range(len(test_y)):
+            if (te_y[i] == k):
+                te_y[i] = 1
+            else:
+                te_y[i] = -1
     clf = SVC(C=C,kernel=basis,degree=degree)
-    clf.fit(train_x,train_y)
+    clf.fit(train_x,tr_y)
     y_pred = clf.predict(test_x)
-    return accuracy_score(test_y, y_pred)
+    return accuracy_score(te_y, y_pred)
 
 # in built function allowed
 
@@ -95,16 +118,6 @@ def print_accuracy_SVM(df, k):
     test_x = test.iloc[:, 0:4].to_numpy().astype('float')
     test_y = test.iloc[:, 4].to_numpy().astype('float')
     acc1,acc2,acc3 = 0,0,0
-    for i in range(len(test_y)):
-        if (test_y[i] == k):
-            test_y[i] = 1
-        else:
-            test_y[i] = -1
-    for i in range(len(train_y)):
-        if (train_y[i] == k):
-            train_y[i] = 1
-        else:
-            train_y[i] = -1
     acc1=find_accuracy_SVM(train_x,train_y,test_x, test_y, k, 'linear')
     acc2=find_accuracy_SVM(train_x,train_y,test_x, test_y, k, 'poly',degree=2)
     acc3=find_accuracy_SVM(train_x,train_y,test_x, test_y, k, 'rbf')
@@ -121,7 +134,7 @@ def find_accuracy_MLP(train,test,hidden_layers,learning_rate):
     train_y = train.iloc[:, 4].to_numpy().astype('float')
     test_x = test.iloc[:, 0:4].to_numpy().astype('float')
     test_y = test.iloc[:, 4].to_numpy().astype('float')
-    clf = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=learning_rate)
+    clf = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=learning_rate,max_iter = 3000)
     clf.fit(train_x, train_y)
     y_pred = clf.predict(test_x)
     return accuracy_score(test_y, y_pred)
@@ -152,7 +165,7 @@ def get_accurate_MLP(df):
         return 2
 
 # in built function not allowed
-# performs backward elmination of features and prints the best set of features
+# performs backward elimination of features and prints the best set of features
 # find the feature whose removal causes least error and remove if error less than original error
 # repeat until no feature can be removed,i.e, original error is less than error after removing a feature
 # error = number of samples*(1 - accuracy)
@@ -177,7 +190,7 @@ def perform_backward_elimination(df,hidden_layers,learning_rate):
             train_y = train1.iloc[:, k-1].to_numpy().astype('float')
             test_x = test1.iloc[:, 0:k-1].to_numpy().astype('float')
             test_y = test1.iloc[:, k-1].to_numpy().astype('float')
-            clf = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=learning_rate)
+            clf = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=learning_rate,max_iter = 3000)
             clf.fit(train_x, train_y)
             y_pred = clf.predict(test_x)
             acc = accuracy_score(test_y, y_pred)
@@ -190,13 +203,13 @@ def perform_backward_elimination(df,hidden_layers,learning_rate):
             org_acc = max_acc
             train = train.drop(train.columns[acc_list.index(max_acc)],axis=1)
             test = test.drop(test.columns[acc_list.index(max_acc)],axis=1)
-            print(f"Removing feature {acc_list.index(max_acc)}")
+            print(f"Removing feature {train.columns[acc_list.index(max_acc)]}")
         else:
             print(f"Stopped removing features")
             break
         
     print(f"The best set of features is {train.columns[:-1].astype('str').to_list()}")
-        
+    print("BACKWARD ELIMINATION ENDED")    
     
 
 # performs max voting technique with 3 models and prints accuracy
@@ -213,7 +226,7 @@ def ensemble_max_voting_technique(df,hidden_layers):
     clf1.fit(train_x,train_y)
     clf2 = SVC(kernel='rbf')
     clf2.fit(train_x,train_y)
-    clf3 = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=0.001)
+    clf3 = MLPClassifier(hidden_layer_sizes=hidden_layers,solver='sgd',batch_size=32,learning_rate_init=0.001,max_iter = 3000)
     clf3.fit(train_x,train_y)
     y_pred_list = []
     y_pred_list.append(clf1.predict(test_x))
@@ -233,12 +246,6 @@ def ensemble_max_voting_technique(df,hidden_layers):
             y_pred.append(y_pred_list[0][i])
         else:   # all 3 models predict different classes for a particular test case, assign class with highest accuracy
             y_pred.append(y_pred_list[acc_list.index(max(acc_list))])
-            # if y_prob1[i][0] > y_prob1[i][1] and y_prob1[i][0] > y_prob1[i][2]:
-            #     y_pred.append(0)
-            # elif y_prob1[i][1] > y_prob1[i][0] and y_prob1[i][1] > y_prob1[i][2]:
-            #     y_pred.append(1)
-            # else:
-            #     y_pred.append(2)
             
     print(f"Accuracy of ensemble model is {accuracy_score(test_y, y_pred)}")
 
@@ -257,7 +264,7 @@ if __name__ == '__main__':
     df = categorical_encoding(df)
     # shuffle the dataframe
     #print(df)
-    df = sample_dataframe(df)
+    df = shuffle_dataframe(df)
     df.reset_index(drop=True, inplace=True)
     #print(df)
     '''
@@ -267,6 +274,7 @@ if __name__ == '__main__':
        Thus, we will overfit the data.
        If we can overfit it with a linear model, that means the data is linearly separable.
     '''
+    print("FINDING LINEAR SEPARABLE DATA")
     k = find_linearly_separable(df)
     if k == 0:
         print("Class Iris-setosa is linearly separable than other two classes, Iris-versicolor and Iris-virginica")
@@ -314,3 +322,5 @@ if __name__ == '__main__':
 
     # perform ensemble learning (max voting technique) with 3 models and print accuracy
     ensemble_max_voting_technique(df,layers_hidden)
+
+    #print(df)
