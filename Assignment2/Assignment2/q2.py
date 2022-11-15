@@ -201,9 +201,9 @@ def perform_backward_elimination(df,hidden_layers,learning_rate):
             print(f"Accuracy after removing feature {i} is {acc_list[i]}")
         if max_acc > org_acc:
             org_acc = max_acc
+            print(f"Removing feature {train.columns[acc_list.index(max_acc)]}")
             train = train.drop(train.columns[acc_list.index(max_acc)],axis=1)
             test = test.drop(test.columns[acc_list.index(max_acc)],axis=1)
-            print(f"Removing feature {train.columns[acc_list.index(max_acc)]}")
         else:
             print(f"Stopped removing features")
             break
@@ -276,7 +276,7 @@ if __name__ == '__main__':
        Thus, we will overfit the data.
        If we can overfit it with a linear model, that means the data is linearly separable.
     '''
-    print("FINDING LINEAR SEPARABLE DATA")
+    print("FINDING LINEARLY SEPARABLE DATA")
     k = find_linearly_separable(df)
     if k == 0:
         print("Class Iris-setosa is linearly separable than other two classes, Iris-versicolor and Iris-virginica")
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     
     # vary learning rate of most optimal MLP classifier and print its accuracy
     # also plot on graph 
-    learning_rates = [0.0001,0.001,0.01,0.1,1]
+    learning_rates = [0.00001,0.0001,0.001,0.01,0.1,1]
     accuracies = []
     classifiers = []
     # split data into test and train
@@ -320,7 +320,7 @@ if __name__ == '__main__':
     plt.savefig("MLP accuracy vs learning_rate.png")
 
     # use backward elimination on best accuracy MLP classifier above and print the best set of features
-    perform_backward_elimination(df,layers_hidden,0.01)
+    perform_backward_elimination(df,layers_hidden,0.001)
 
     # perform ensemble learning (max voting technique) with 3 models and print accuracy
     ensemble_max_voting_technique(df,layers_hidden)
