@@ -1,1 +1,26 @@
 FINDING LINEAR SEPARABLE DATA
+Class Iris-setosa is linearly separable than other two classes, Iris-versicolor and Iris-virginica
+Accuracy of SVM using linear kernel is 0.9666666666666667
+Accuracy of SVM using quadratic kernel is 0.7333333333333333
+Accuracy of SVM using radial basis function kernel is 0.9666666666666667
+The accuracy of MLP classifier with one hidden layer of 16 nodes is 0.9666666666666667
+The accuracy of MLP classifier with two hidden layers of 256 and 16 nodes is 0.9666666666666667
+Second option given in question gives more accuracy,hidden layers = (256,16)
+Learning rates are  [0.0001, 0.001, 0.01, 0.1, 1]
+Accuracies are  [0.9666666666666667, 0.9666666666666667, 0.9666666666666667, 0.9666666666666667, 0.3]
+Maximum accuracy learning rate is 0.0001
+BACKWARD ELIMINATION STARTED
+Current accuracy is  0.9666666666666667
+Accuracy after removing feature 0 is 0.9666666666666667
+Accuracy after removing feature 1 is 0.9666666666666667
+Accuracy after removing feature 2 is 0.9666666666666667
+Accuracy after removing feature 3 is 1.0
+Removing feature class
+Current accuracy is  1.0
+Accuracy after removing feature 0 is 1.0
+Accuracy after removing feature 1 is 1.0
+Accuracy after removing feature 2 is 0.8333333333333334
+Stopped removing features
+The best set of features is ['sepal length', 'sepal width', 'petal length']
+BACKWARD ELIMINATION ENDED
+Accuracy of ensemble model is 0.9666666666666667
